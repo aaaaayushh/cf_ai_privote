@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' https://unpkg.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Privote - Privacy-First Meeting Notes</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-title">Privote</h1>
+        <p class="app-subtitle">Privacy-First Notes</p>
+      </div>
+      
+      <ul class="nav-menu">
+        <li class="nav-item active" data-view="record">
+          <span class="nav-label">Record</span>
+        </li>
+        <li class="nav-item" data-view="summaries">
+          <span class="nav-label">Summaries</span>
+        </li>
+        <li class="nav-item" data-view="settings">
+          <span class="nav-label">Settings</span>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Record View -->
+      <div class="view active" id="record-view">
+        <div class="view-header">
+          <h2>Record Meeting</h2>
+          <p class="view-description">Record audio or upload a file for local transcription</p>
+        </div>
+        
+        <div class="record-container">
+          <div class="record-controls">
+            <div class="audio-visualizer">
+              <canvas id="visualizer-canvas" width="400" height="100"></canvas>
+            </div>
+            
+            <div class="timer" id="recording-timer">00:00:00</div>
+            
+            <div class="button-group">
+              <button class="btn btn-primary btn-large" id="record-btn">
+                <i data-lucide="mic" class="btn-icon"></i>
+                <span>Start Recording</span>
+              </button>
+              <button class="btn btn-secondary" id="upload-btn">
+                <i data-lucide="folder-open" class="btn-icon"></i>
+                <span>Upload Audio</span>
+              </button>
+            </div>
+            
+            <div class="status-message" id="status-message"></div>
+          </div>
+          
+          <div class="transcript-preview" id="transcript-section" style="display: none;">
+            <div class="section-header">
+              <h3>Transcript</h3>
+              <button class="btn btn-small" id="copy-transcript-btn">Copy</button>
+            </div>
+            <div class="transcript-content" id="transcript-content">
+              Your transcript will appear here...
+            </div>
+            
+            <div class="transcript-actions">
+              <button class="btn btn-primary" id="upload-transcript-btn">
+                Upload to Worker
+              </button>
+              <button class="btn btn-secondary" id="save-transcript-btn">
+                Save Locally
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summaries View -->
+      <div class="view" id="summaries-view">
+        <div class="view-header">
+          <h2>Meeting Summaries</h2>
+          <p class="view-description">Summaries from your Cloudflare Worker</p>
+          <button class="btn btn-secondary" id="refresh-summaries-btn">Refresh</button>
+        </div>
+        
+        <div class="list-container">
+          <div id="summaries-list" class="items-list">
+            <div class="empty-state">
+              <p>No summaries yet</p>
+              <p class="empty-subtitle">Upload a transcript to generate summaries</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings View -->
+      <div class="view" id="settings-view">
+        <div class="view-header">
+          <h2>Settings</h2>
+          <p class="view-description">Configure your Privote application</p>
+        </div>
+        
+        <div class="settings-container">
+          <div class="settings-section">
+            <h3>Cloudflare Worker Configuration</h3>
+            <div class="form-group">
+              <label for="worker-url">Worker URL</label>
+              <input type="url" id="worker-url" placeholder="https://your-worker.workers.dev">
+              <small>Your self-hosted Cloudflare Worker endpoint</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="api-key">API Key (Optional)</label>
+              <input type="password" id="api-key" placeholder="Enter API key if required">
+              <small>For authenticated Worker access</small>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>Privacy & Storage</h3>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="auto-upload">
+                <span>Automatically upload transcripts after transcription</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="keep-local">
+                <span>Keep local copies of transcripts</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>About</h3>
+            <div class="about-info">
+              <p><strong>Version:</strong> <span id="app-version">0.1.0</span></p>
+              <p><strong>Data Location:</strong> <span id="data-path">Loading...</span></p>
+            </div>
+          </div>
+          
+          <div class="settings-actions">
+            <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+            <button class="btn btn-secondary" id="reset-settings-btn">Reset to Defaults</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
+

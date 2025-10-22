@@ -1,0 +1,91 @@
+{
+  "name": "privote-desktop",
+  "version": "0.1.0",
+  "description": "Privacy-focused AI meeting notetaker desktop application",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "verify-whisper": "node scripts/verify-whisper.js"
+  },
+  "keywords": [
+    "electron",
+    "privacy",
+    "transcription",
+    "whisper",
+    "meeting-notes"
+  ],
+  "author": "Aayush Shah",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^38.3.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "lucide": "^0.546.0",
+    "node-fetch": "^3.3.2"
+  },
+  "build": {
+    "appId": "com.privote.desktop",
+    "productName": "Privote",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Privote needs access to your microphone to record and transcribe meetings.",
+        "NSCameraUsageDescription": "Privote does not access your camera."
+      }
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Office"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "models/**/*",
+      "lib/**/*",
+      "whisper-cli"
+    ],
+    "extraResources": [
+      {
+        "from": "models",
+        "to": "models",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "lib",
+        "to": "lib",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "whisper-cli",
+        "to": "whisper-cli"
+      }
+    ]
+  }
+}

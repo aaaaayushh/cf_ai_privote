@@ -1,0 +1,20 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.env
+.env.local
+
+# Whisper models (can be large)
+models/*.bin
+
+# Recordings
+recordings/*.wav
+recordings/*.mp3
+recordings/*.json
+
+# Build artifacts
+out/
+release/
+

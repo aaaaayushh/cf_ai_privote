@@ -1,0 +1,13 @@
+# Whisper Models Directory
+
+Place your Whisper model files (.bin) here.
+
+Download models from: https://huggingface.co/ggerganov/whisper.cpp
+
+Recommended models:
+- ggml-base.en.bin (74 MB) - Good balance of speed and accuracy
+- ggml-small.en.bin (466 MB) - Better accuracy
+- ggml-tiny.en.bin (75 MB) - Fastest, lower accuracy
+
+These files are ignored by git due to their large size.
+
