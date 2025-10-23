@@ -12,7 +12,7 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 - [Quick Start](#quick-start)
 - [Desktop App Setup](#desktop-app-setup)
   - [Whisper Model Configuration](#whisper-model-configuration)
-  - [Advanced: Swapping Models](#advanced-swapping-whisper-models-optional)
+  - [Building and Installing the App](#building-and-installing-the-app)
 - [Worker Deployment](#worker-deployment)
 - [Usage](#usage)
 - [API Key Authentication](#api-key-authentication)
@@ -163,6 +163,63 @@ npm run deploy
 
 - **Binaries**: `privote-desktop/lib/` (.dylib, .dll, or .so files)
 - **Models**: `privote-desktop/models/` (.bin files)
+
+### Building and Installing the App
+
+#### Build the App
+
+```bash
+cd privote-desktop
+
+# Install dependencies (if not already done)
+npm install
+
+# Build for macOS (creates DMG and ZIP files)
+npm run build:mac
+```
+
+This will create the following files in the `dist/` directory:
+
+- `Privote-0.1.0.dmg` - macOS installer
+- `Privote-0.1.0-mac.zip` - Portable ZIP archive
+
+#### Install the App
+
+**Option 1: Using the DMG installer (Recommended)**
+
+1. Double-click `Privote-0.1.0.dmg` to mount it
+2. Drag `Privote.app` to your `Applications` folder
+3. Eject the DMG when done
+4. Launch `Privote` from Applications or Spotlight
+
+**Option 2: Using the ZIP archive**
+
+1. Extract `Privote-0.1.0-mac.zip`
+2. Move `Privote.app` to your `Applications` folder
+3. Launch `Privote` from Applications or Spotlight
+
+#### First Launch Setup
+
+1. **Grant microphone permissions** when prompted
+2. **Download a Whisper model** in Settings → Whisper Model
+3. **Configure your Worker** in Settings → Cloudflare Worker Configuration
+
+#### Troubleshooting
+
+**App won't launch:**
+
+- Check macOS security settings in System Preferences → Security & Privacy
+- Click "Open Anyway" if macOS blocks the app
+
+**Microphone access denied:**
+
+- Go to System Preferences → Security & Privacy → Privacy → Microphone
+- Enable Privote in the list
+
+**Model downloads fail:**
+
+- Check your internet connection
+- Ensure the app has network permissions
 
 ## Worker Deployment
 
