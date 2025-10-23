@@ -20,7 +20,9 @@ export const state = {
   currentTranscript: null,
 
   // Settings state
-  settings: {},
+  settings: {
+    whisperModel: "ggml-base.en.bin",
+  },
 };
 
 /**

@@ -11,11 +11,8 @@
 - Help me debug this "Export to Markdown" feature, it's not working as expected. @privote-desktop.
 - can you refactor @renderer so it follows best practices? Split up the code into smaller files, and make the functions modular. Focus on the css please.
 - Can you add a "pause recording" option when the recording is in progress, and a confirmation dialog when the user wants to stop the recording?
-
-#### Blackhole Setup
-
-- I need to set up a multi-output device to route meeting audio to both my speakers and BlackHole, so that Privote can capture the audio and transcribe it. Write down the steps for this process in @README.md.
+- Can you add a "download model" button to the settings page, so that the user can download a model from the internet? The model will be downloaded to the @models directory. Setup a model switcher in the settings page as well.
 
 #### Documentation
 
-- Combine the scattered notes in the readmes across this project into a single, cohesive @README.md. Properly highlight the steps for the user to setup whisper, the worker, and Blackhole. Clearly define the steps for securing the worker with an API key.
+- Combine the scattered notes in the readmes across this project into a single, cohesive @README.md. Properly highlight the steps for the user to setup whisper and the worker. Clearly define the steps for securing the worker with an API key.

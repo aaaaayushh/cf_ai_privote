@@ -24,6 +24,47 @@ import {
 import { processRecording } from "./transcription.js";
 
 /**
+ * Update the current model indicator in the UI
+ */
+export async function updateCurrentModelIndicator() {
+  const modelNameElement = document.getElementById("current-model-name");
+
+  if (!modelNameElement) return;
+
+  try {
+    const result = await api.getCurrentModel();
+
+    if (result.success) {
+      // Get the display name for the model
+      const models = [
+        { name: "ggml-base.en.bin", displayName: "Base English (141MB)" },
+        { name: "ggml-tiny.en.bin", displayName: "Tiny English (74MB)" },
+        { name: "ggml-small.en.bin", displayName: "Small English (244MB)" },
+        { name: "ggml-medium.en.bin", displayName: "Medium English (769MB)" },
+        { name: "ggml-large-v2.bin", displayName: "Large v2 (1550MB)" },
+      ];
+
+      const modelInfo = models.find((m) => m.name === result.model);
+      const displayName = modelInfo ? modelInfo.displayName : result.model;
+
+      modelNameElement.textContent = `${displayName}${
+        !result.available ? " (Missing)" : ""
+      }`;
+      modelNameElement.style.color = result.available
+        ? "var(--primary-color)"
+        : "var(--danger-color)";
+    } else {
+      modelNameElement.textContent = "Unknown";
+      modelNameElement.style.color = "var(--text-secondary)";
+    }
+  } catch (error) {
+    console.error("Error updating current model indicator:", error);
+    modelNameElement.textContent = "Error";
+    modelNameElement.style.color = "var(--danger-color)";
+  }
+}
+
+/**
  * Setup recording controls
  */
 export function setupRecordingControls() {

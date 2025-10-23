@@ -31,6 +31,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getSettings: () => ipcRenderer.invoke("get-settings"),
   saveSettings: (settings) => ipcRenderer.invoke("save-settings", settings),
 
+  // Model management
+  listAvailableModels: () => ipcRenderer.invoke("list-available-models"),
+  downloadModel: (modelName) => ipcRenderer.invoke("download-model", modelName),
+
   // App info
   getAppInfo: () => ipcRenderer.invoke("get-app-info"),
+  getCurrentModel: () => ipcRenderer.invoke("get-current-model"),
 });

@@ -5,6 +5,7 @@
 
 import { loadMeetings } from "./meetings.js";
 import { loadRecordings } from "./recordings.js";
+import { updateCurrentModelIndicator } from "./recording.js";
 
 /**
  * Setup navigation event listeners
@@ -27,6 +28,8 @@ export function setupNavigation() {
         loadMeetings();
       } else if (viewId === "recordings") {
         loadRecordings();
+      } else if (viewId === "record") {
+        updateCurrentModelIndicator();
       }
     });
   });

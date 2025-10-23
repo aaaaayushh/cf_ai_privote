@@ -6,10 +6,17 @@
 import { state, setState } from "./state.js";
 import * as api from "./api.js";
 import { setupNavigation } from "./navigation.js";
-import { setupRecordingControls } from "./recording.js";
+import {
+  setupRecordingControls,
+  updateCurrentModelIndicator,
+} from "./recording.js";
 import { setupRecordingsView } from "./recordings.js";
 import { setupSummariesControls } from "./meetings.js";
-import { setupSettingsControls, updateSettingsUI } from "./settings.js";
+import {
+  setupSettingsControls,
+  updateSettingsUI,
+  setupModelSelection,
+} from "./settings.js";
 import { initializeVisualizer } from "./audio.js";
 
 /**
@@ -26,6 +33,9 @@ async function initializeApp() {
   document.getElementById("app-version").textContent = info.version;
   document.getElementById("data-path").textContent = info.userDataPath;
 
+  // Update current model indicator
+  await updateCurrentModelIndicator();
+
   initializeVisualizer();
 }
 
@@ -38,6 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupRecordingControls();
   setupRecordingsView();
   setupSettingsControls();
+  setupModelSelection();
   setupSummariesControls();
 
   // Initialize Lucide icons

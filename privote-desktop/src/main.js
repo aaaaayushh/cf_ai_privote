@@ -136,11 +136,32 @@ ipcMain.handle("load-audio-file", async () => {
 
 // Transcription handlers
 const WhisperClient = require("./whisper/whisper-client");
-const whisperClient = new WhisperClient();
+
+// Initialize WhisperClient with settings
+async function initializeWhisperClient() {
+  try {
+    const settingsPath = path.join(app.getPath("userData"), "settings.json");
+    let whisperModel = "ggml-base.en.bin"; // default
+
+    if (fs.existsSync(settingsPath)) {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+      whisperModel = settings.whisperModel || whisperModel;
+    }
+
+    // Pass just the model filename - WhisperClient will handle the path resolution
+    return new WhisperClient({ modelPath: whisperModel });
+  } catch (error) {
+    console.error("Error initializing WhisperClient:", error);
+    return new WhisperClient(); // fallback to default
+  }
+}
 
 ipcMain.handle("transcribe-audio", async (event, audioFilePath) => {
   try {
     console.log("Transcribing audio:", audioFilePath);
+
+    // Get or initialize Whisper client with current settings
+    const whisperClient = await initializeWhisperClient();
 
     // Use Whisper client for transcription
     const result = await whisperClient.transcribe(audioFilePath);
@@ -423,6 +444,7 @@ ipcMain.handle("get-settings", async () => {
         apiKey: "",
         autoUpload: true,
         keepLocalCopies: true,
+        whisperModel: "ggml-base.en.bin",
       };
       return { success: true, settings: defaultSettings };
     }
@@ -453,4 +475,144 @@ ipcMain.handle("get-app-info", async () => {
     name: app.getName(),
     userDataPath: app.getPath("userData"),
   };
+});
+
+// Get current Whisper model
+ipcMain.handle("get-current-model", async () => {
+  try {
+    const settingsPath = path.join(app.getPath("userData"), "settings.json");
+
+    if (fs.existsSync(settingsPath)) {
+      const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+      const modelName = settings.whisperModel || "ggml-base.en.bin";
+
+      // Check if model exists (privote-desktop/models/)
+      const modelsDir = path.join(__dirname, "..", "models");
+      const modelExists = fs.existsSync(path.join(modelsDir, modelName));
+
+      return {
+        success: true,
+        model: modelName,
+        available: modelExists,
+      };
+    }
+
+    return {
+      success: true,
+      model: "ggml-base.en.bin",
+      available: true, // Default model should be available
+    };
+  } catch (error) {
+    console.error("Error getting current model:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// List available Whisper models
+ipcMain.handle("list-available-models", async () => {
+  try {
+    // Use the models directory in privote-desktop/models/
+    const modelsDir = path.join(__dirname, "..", "models");
+    const models = [
+      {
+        name: "ggml-base.en.bin",
+        displayName: "Base English (141MB)",
+        size: "141MB",
+      },
+      {
+        name: "ggml-tiny.en.bin",
+        displayName: "Tiny English (74MB)",
+        size: "74MB",
+      },
+      {
+        name: "ggml-small.en.bin",
+        displayName: "Small English (244MB)",
+        size: "244MB",
+      },
+      {
+        name: "ggml-medium.en.bin",
+        displayName: "Medium English (769MB)",
+        size: "769MB",
+      },
+      {
+        name: "ggml-large-v2.bin",
+        displayName: "Large v2 (1550MB)",
+        size: "1550MB",
+      },
+    ];
+
+    if (!fs.existsSync(modelsDir)) {
+      return {
+        success: true,
+        models: models.map((m) => ({ ...m, available: false })),
+      };
+    }
+
+    const files = fs.readdirSync(modelsDir);
+    const availableModels = models.map((model) => ({
+      ...model,
+      available: files.some((file) => file === model.name),
+    }));
+
+    return { success: true, models: availableModels };
+  } catch (error) {
+    console.error("Error listing available models:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Download Whisper model
+ipcMain.handle("download-model", async (event, modelName) => {
+  try {
+    // Use the models directory in privote-desktop/models/
+    const modelsDir = path.join(__dirname, "..", "models");
+
+    // Create models directory if it doesn't exist
+    if (!fs.existsSync(modelsDir)) {
+      fs.mkdirSync(modelsDir, { recursive: true });
+    }
+
+    // Check if model already exists
+    if (fs.existsSync(path.join(modelsDir, modelName))) {
+      return { success: true, message: "Model already exists" };
+    }
+
+    // Map model names to their Hugging Face URLs
+    const modelUrls = {
+      "ggml-base.en.bin":
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin",
+      "ggml-tiny.en.bin":
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin",
+      "ggml-small.en.bin":
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin",
+      "ggml-medium.en.bin":
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.en.bin",
+      "ggml-large-v2.bin":
+        "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v2.bin",
+    };
+
+    const modelUrl = modelUrls[modelName];
+    if (!modelUrl) {
+      return { success: false, error: `Unknown model: ${modelName}` };
+    }
+
+    const modelPath = path.join(modelsDir, modelName);
+
+    // Download the model
+    const response = await fetch(modelUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const buffer = await response.arrayBuffer();
+    fs.writeFileSync(modelPath, Buffer.from(buffer));
+
+    return {
+      success: true,
+      message: `Model ${modelName} downloaded successfully`,
+    };
+  } catch (error) {
+    console.error("Error downloading model:", error);
+    return { success: false, error: error.message };
+  }
 });

@@ -46,6 +46,10 @@
         <div class="view-header">
           <h2>Record Meeting</h2>
           <p class="view-description">Record audio or upload a file for local transcription</p>
+          <div class="current-model-indicator">
+            <span class="model-label">Model:</span>
+            <span class="model-name" id="current-model-name">Loading...</span>
+          </div>
         </div>
         
         <div class="record-container">
@@ -155,6 +159,44 @@
           </div>
           
           <div class="settings-section">
+            <h3>Whisper Model</h3>
+            <div class="form-group">
+              <label for="whisper-model">Select Model</label>
+              <select id="whisper-model">
+                <option value="ggml-base.en.bin">Base English (141MB) - Good balance of speed and accuracy</option>
+                <option value="ggml-tiny.en.bin">Tiny English (74MB) - Fastest, lowest accuracy</option>
+                <option value="ggml-small.en.bin">Small English (244MB) - Better accuracy, slower</option>
+                <option value="ggml-medium.en.bin">Medium English (769MB) - High accuracy, slow</option>
+                <option value="ggml-large-v2.bin">Large v2 (1550MB) - Best accuracy, very slow</option>
+              </select>
+              <small>The Whisper model used for transcription. Larger models are more accurate but slower and require more resources.</small>
+            </div>
+
+            <div class="form-group">
+              <button class="btn btn-secondary" id="download-model-btn">
+                <i data-lucide="download" class="btn-icon"></i>
+                <span>Download Model</span>
+              </button>
+              <small>Download additional Whisper models from Hugging Face. This may take several minutes for large models.</small>
+            </div>
+
+            <div class="form-group">
+              <label for="available-models">Available Models</label>
+              <div id="available-models" class="model-list">
+                <div class="model-item">
+                  <span class="model-name">ggml-base.en.bin</span>
+                  <span class="model-status available">Available</span>
+                </div>
+                <div class="model-item">
+                  <span class="model-name">ggml-tiny.en.bin</span>
+                  <span class="model-status available">Available</span>
+                </div>
+              </div>
+              <small>Models in your models directory. Click "Download Model" to get additional models.</small>
+            </div>
+          </div>
+
+          <div class="settings-section">
             <h3>Privacy & Storage</h3>
             <div class="form-group">
               <label class="checkbox-label">
@@ -162,7 +204,7 @@
                 <span>Automatically upload transcripts after transcription</span>
               </label>
             </div>
-            
+
             <div class="form-group">
               <label class="checkbox-label">
                 <input type="checkbox" id="keep-local">

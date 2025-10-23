@@ -10,7 +10,6 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 
 - [Features](#features)
 - [Quick Start](#quick-start)
-- [Audio Setup](#audio-setup)
 - [Desktop App Setup](#desktop-app-setup)
   - [Whisper Model Configuration](#whisper-model-configuration)
   - [Advanced: Swapping Models](#advanced-swapping-whisper-models-optional)
@@ -23,17 +22,17 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 
 ### Local Transcription
 
-- Record meeting audio or upload existing files (WAV, MP3, M4A, OGG, WebM)
+- Record meeting audio or upload existing files (only .wav files are supported)
 - Whisper.cpp runs locally for speech-to-text processing
 - All audio processing stays on your device
-- Pre-built app includes base.en model (swap to tiny/small/medium if desired)
+- **Easy model switching** - choose from Tiny, Base, Small, Medium, or Large models
+- **One-click model downloads** directly from the app settings
+- Pre-built app includes Base and Tiny models ready to use
 
 ### AI-Powered Summarization
 
 - Self-hosted Cloudflare Worker processes transcripts
 - Llama 3.3 generates concise summaries and extracts action items
-- Fast edge processing (5-15 seconds typical)
-- Parallel AI processing for optimal performance
 
 ### Meeting Management
 
@@ -48,7 +47,6 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 - **Node.js 18+** and npm
 - **Cloudflare account** (free tier works)
 - **macOS** (Windows and Linux coming soon)
-- **Audio loopback device** for capturing meeting audio (see [Audio Setup](#audio-setup))
 
 ### 1. Clone Repository
 
@@ -67,7 +65,16 @@ npm install
 npm start
 ```
 
-**Note:** The `lib/` and `models/` folders should already contain the necessary Whisper binaries and base.en model. If transcription doesn't work, see the [Desktop App Setup](#desktop-app-setup) section to configure Whisper.
+#### Whisper Model Management
+
+The app runs Whisper.cpp locally. You will need to download a model before you can start recording.
+
+**Use the built-in model manager**
+
+1. Open the app and go to **Settings** → **Whisper Model**
+2. Select your preferred model from the dropdown
+3. Click **Download Model** to get additional models (Small, Medium, Large)
+4. The app automatically detects available models and shows their status
 
 ### 3. Deploy Cloudflare Worker
 
@@ -82,10 +89,10 @@ npm install
 
 # Create database and initialize schema
 npx wrangler d1 create privote-db
-# Copy the database ID from output and update wrangler.jsonc
+# the cli output will ask you if you want to add the database config to wrangler.jsonc, say yes.
 
 # Initialize database schema
-npx wrangler d1 execute privote-db --file=./src/schema.sql
+npx wrangler d1 execute privote-db --remote --file=./src/schema.sql
 
 # Deploy to Cloudflare
 npm run deploy
@@ -104,9 +111,9 @@ openssl rand -hex 32
 > **Save the API key!** You'll need it in the next step.
 
 ```bash
-# Set it as a Cloudflare secret
-npx wrangler secret put API_KEY
-# Paste the generated key when prompted
+# Set the name of the secret only (do NOT include your API key on the command line!)
+npx wrangler secret put PRIVATE_API_KEY
+# When prompted, paste your API key (the long hex string you generated above) and press Enter
 
 # Redeploy with the secret
 npm run deploy
@@ -120,52 +127,20 @@ npm run deploy
 4. **Enter your API Key** (the one you generated in Step 4)
    . Click **Save Settings**
 
-### 6. Set Up Audio Capture
-
-Follow the [Audio Setup](#audio-setup) instructions to configure audio loopback for meeting capture.
-
-### 7. Record Your First Meeting
+### 6. Record Your First Meeting
 
 1. Go to **Record** tab
-2. Click **Start Recording** (or **Upload Audio**)
-3. Speak for a few seconds
-4. Click **Stop Recording**
-5. Wait for local transcription
-6. Review and upload to Worker
-7. View AI-generated summary and action items!
+2. **Check the model indicator** - shows which Whisper model will be used
+3. Click **Start Recording** (or **Upload Audio**)
+4. Speak for a few seconds
+5. Click **Stop Recording**
+6. Wait for local transcription using your selected model
+7. Review and upload to Worker
+8. View AI-generated summary and action items!
+
+**Pro tip:** Switch between models in Settings to find the best balance of speed vs. accuracy for your needs!
 
 **Note:** If you skipped Step 4 (API key setup), your Worker is publicly accessible. See [API Key Authentication](#api-key-authentication) to add authentication later.
-
-## Audio Setup
-
-### Audio Loopback Device
-
-Privote requires an audio loopback device to capture audio from meeting applications (Google Meet, Zoom, Microsoft Teams, etc.). I recommend [BlackHole](https://github.com/ExistentialAudio/BlackHole) for macOS.
-
-**Install BlackHole:**
-
-1. Download from [GitHub releases](https://github.com/ExistentialAudio/BlackHole/releases)
-2. Install the `.pkg` file
-3. Restart your Mac
-
-### Multi-Output Device Setup
-
-Create a multi-output device to route meeting audio to both your speakers and BlackHole:
-
-1. Open **Audio MIDI Setup** (Applications > Utilities)
-2. Click the **+** button and select **Create Multi-Output Device**
-3. Check both your speakers and **BlackHole 2ch**
-4. Name it "Meeting Audio" (or similar)
-5. Set this as your system output device
-
-### Meeting Configuration
-
-In your meeting application:
-
-1. Set **Speaker** to "Meeting Audio" (your multi-output device)
-2. In Privote, select **BlackHole 2ch** as the recording source
-
-This setup captures all meeting audio while preserving your ability to hear participants through your speakers.
 
 ## Desktop App Setup
 
@@ -173,83 +148,21 @@ This setup captures all meeting audio while preserving your ability to hear part
 
 **For most users:** The cloned repository already includes:
 
-- Whisper.cpp binaries (optimized for your platform)
-- Base.en model (74 MB) - good accuracy, fast performance
-- Ready to use immediately - no additional setup required
+- Whisper.cpp binaries
+- **Built-in model manager** for easy switching and downloading
+- Ready to use immediately after downloading a whisper model
 
 **Just run `npm start`!** Transcription works out of the box.
 
-### Advanced: Swapping Whisper Models (Optional)
+#### Model Management Features
 
-If you want to use a different Whisper model (for better accuracy or faster processing), follow these steps:
-
-#### Steps to Swap Models
-
-1. **Build Whisper.cpp** (if not already done):
-
-```bash
-cd privote-desktop
-
-# Clone whisper.cpp
-git clone https://github.com/ggerganov/whisper.cpp.git
-cd whisper.cpp
-
-# Build for your platform
-make  # Basic build
-```
-
-2. **Download your preferred model**:
-
-```bash
-# Still in whisper.cpp directory
-cd models
-
-# Download the model you want
-bash download-ggml-model.sh small.en  # Or tiny.en, medium.en
-```
-
-3. **Copy model to Privote**:
-
-```bash
-# Create models directory if it doesn't exist
-mkdir -p ../../models
-
-# Copy your chosen model
-cp ggml-small.en.bin ../../models/
-
-# Go back to privote-desktop
-cd ../..
-```
-
-4. **Copy updated binaries** (if you rebuilt with acceleration):
-
-```bash
-# macOS
-cp whisper.cpp/*.dylib lib/
-cp whisper.cpp/*.metal lib/
-
-# Linux
-cp whisper.cpp/*.so lib/
-
-# Windows
-cp whisper.cpp/*.dll lib/
-```
-
-5. **Update model path** in `src/whisper/whisper-client.js`:
-
-```javascript
-// Change this line:
-this.modelPath = path.join(__dirname, "../../models/ggml-small.en.bin");
-// Or keep base.en for the default
-```
-
-6. **Restart the app** and transcription will use your new model.
+- **Visual model selector** in Settings → Whisper Model
+- **One-click downloads** for additional models
 
 #### Model Storage Locations
 
 - **Binaries**: `privote-desktop/lib/` (.dylib, .dll, or .so files)
 - **Models**: `privote-desktop/models/` (.bin files)
-- **Whisper source** (optional): `privote-desktop/whisper.cpp/`
 
 ## Worker Deployment
 
@@ -348,6 +261,7 @@ Configure in **Settings** tab:
 
 - **Worker URL**: Your deployed Cloudflare Worker
 - **API Key**: Optional authentication (see [API Key Authentication](#api-key-authentication))
+- **Whisper Model**: Select and download Whisper models for transcription
 - **Auto Upload**: Automatically upload after transcription
 - **Keep Local Copies**: Save recordings on device
 

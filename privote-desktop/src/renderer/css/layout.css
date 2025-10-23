@@ -116,6 +116,11 @@
 
 .view-header {
   margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .view-header h2 {
@@ -127,5 +132,27 @@
 .view-description {
   color: var(--text-secondary);
   font-size: 14px;
+  flex: 1;
+}
+
+.current-model-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.model-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.model-name {
+  font-weight: 600;
+  color: var(--primary-color);
 }
 

@@ -71,6 +71,14 @@ export async function getAppInfo() {
 }
 
 /**
+ * Get current Whisper model
+ * @returns {Promise<Object>} Current model info
+ */
+export async function getCurrentModel() {
+  return await window.electronAPI.getCurrentModel();
+}
+
+/**
  * Start recording (IPC call)
  * @returns {Promise<Object>} API response
  */
@@ -136,4 +144,21 @@ export async function deleteRecording(filepath) {
  */
 export async function showRecordingInFolder(filepath) {
   return await window.electronAPI.showRecordingInFolder(filepath);
+}
+
+/**
+ * List available Whisper models
+ * @returns {Promise<Object>} API response with available models
+ */
+export async function listAvailableModels() {
+  return await window.electronAPI.listAvailableModels();
+}
+
+/**
+ * Download a Whisper model
+ * @param {string} modelName - Name of the model to download
+ * @returns {Promise<Object>} API response
+ */
+export async function downloadModel(modelName) {
+  return await window.electronAPI.downloadModel(modelName);
 }

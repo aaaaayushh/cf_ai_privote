@@ -26,9 +26,21 @@ class WhisperClient {
       ? path.join(__dirname, "../..")
       : process.resourcesPath;
 
-    this.modelPath =
-      options.modelPath ||
-      path.join(resourcesPath, "models", "ggml-base.en.bin");
+    // If modelPath is just a filename, assume it's in the project models directory
+    if (
+      options.modelPath &&
+      !path.isAbsolute(options.modelPath) &&
+      !options.modelPath.includes("/")
+    ) {
+      // Use the models directory in the project root
+      this.modelPath = path.join(resourcesPath, "models", options.modelPath);
+      console.log(`[Whisper] Model path: ${this.modelPath}`);
+    } else {
+      this.modelPath =
+        options.modelPath ||
+        path.join(resourcesPath, "models", "ggml-base.en.bin");
+      console.log(`[Whisper] Model path: ${this.modelPath}`);
+    }
 
     // Default to looking for whisper.cpp executable in common locations
     this.whisperPath =
