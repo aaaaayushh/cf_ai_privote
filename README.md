@@ -179,15 +179,23 @@ npm install
 
 ```bash
 npx wrangler d1 create privote-db
+# The CLI output will ask if you want to add the database config to wrangler.jsonc. Say yes, unless you want to add it manually.
 ```
 
-2. **Update `wrangler.jsonc`** with the database ID from the output:
+2. **(Optional)** If you did **not** add the config automatically, update `wrangler.jsonc` manually with your database ID from the output:
 
 ```jsonc
-[[d1_databases]]
-binding = "DB"
-database_name = "privote-db"
-database_id = "your-database-id-here"  // Update this
+{
+  // ... existing config
+  "d1_databases": [
+    {
+      "binding": "privote_db",
+      "database_name": "privote-db",
+      "database_id": "your-database-id-here"
+    }
+  ]
+  // ... existing config
+}
 ```
 
 3. **Initialize schema:**
@@ -235,23 +243,6 @@ https://privote-worker.<your-subdomain>.workers.dev
 ### Secure Your Deployment (Recommended)
 
 **Note:** API key authentication is recommended for production use. If you haven't already set this up, follow the instructions in [API Key Authentication](#api-key-authentication).
-
-### Verify Deployment
-
-```bash
-# Check health
-curl https://your-worker-url/health
-
-# Test with API key (if configured)
-curl https://your-worker-url/api/meetings \
-  -H "X-API-Key: your-api-key-here"
-
-# List deployments
-npx wrangler deployments list
-
-# View logs
-npx wrangler tail
-```
 
 ## Usage
 
