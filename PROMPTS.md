@@ -10,6 +10,7 @@
 - Create a sleek, minimalistic UI for the desktop app using electron.js, by going through the @README.md. Use lucide for the icons. Keep it simple and clean.
 - Help me debug this "Export to Markdown" feature, it's not working as expected. @privote-desktop.
 - can you refactor @renderer so it follows best practices? Split up the code into smaller files, and make the functions modular. Focus on the css please.
+- Can you add a "pause recording" option when the recording is in progress, and a confirmation dialog when the user wants to stop the recording?
 
 #### Blackhole Setup
 

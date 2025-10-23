@@ -36,6 +36,22 @@
   background-color: var(--secondary-color);
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary:disabled:hover {
+  background-color: var(--primary-color);
+  transform: none;
+}
+
+.btn-secondary:disabled:hover {
+  background-color: var(--bg-tertiary);
+  transform: none;
+}
+
 .btn-large {
   padding: 16px 32px;
   font-size: 16px;
@@ -81,6 +97,13 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+#pause-btn {
+  display: none;
+  align-items: center;
 }
 
 /* Recording Controls */
@@ -283,17 +306,22 @@
   font-size: 11px;
 }
 
-.delete-meeting-btn {
+.delete-meeting-btn,
+.delete-recording-btn {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
   opacity: 0.5;
   transition: opacity var(--transition-normal);
+  padding: 4px;
+  color: var(--text-secondary);
 }
 
-.delete-meeting-btn:hover {
+.delete-meeting-btn:hover,
+.delete-recording-btn:hover {
   opacity: 1;
+  color: var(--danger-color);
 }
 
 /* Empty State */
@@ -407,5 +435,29 @@
 .settings-actions {
   display: flex;
   gap: 12px;
+}
+
+/* Recordings View */
+.recording-card {
+  cursor: default;
+}
+
+.recording-info {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.recording-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.recording-actions .btn {
+  margin: 0;
 }
 

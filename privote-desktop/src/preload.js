@@ -9,6 +9,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
   saveAudio: (audioData) => ipcRenderer.invoke("save-audio", audioData),
   loadAudioFile: () => ipcRenderer.invoke("load-audio-file"),
 
+  // Recording management
+  listRecordings: () => ipcRenderer.invoke("list-recordings"),
+  deleteRecording: (filepath) =>
+    ipcRenderer.invoke("delete-recording", filepath),
+  showRecordingInFolder: (filepath) =>
+    ipcRenderer.invoke("show-recording-in-folder", filepath),
+
   // Transcription methods
   transcribeAudio: (audioFilePath) =>
     ipcRenderer.invoke("transcribe-audio", audioFilePath),

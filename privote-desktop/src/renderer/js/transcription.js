@@ -10,6 +10,8 @@ import {
   showTitleInputDialog,
   showConfirmDialog,
   displayTranscript,
+  disableRecordingControls,
+  enableRecordingControls,
 } from "./ui.js";
 import { viewMeetingDetails } from "./meetings.js";
 
@@ -28,6 +30,7 @@ export async function processRecording(audioBlob) {
       const saveResult = await api.saveAudio(base64Audio);
 
       if (saveResult.success) {
+        disableRecordingControls();
         showStatus(
           "Recording saved. Starting transcription...",
           "success",
@@ -51,6 +54,7 @@ export async function processRecording(audioBlob) {
             "error"
           );
         }
+        enableRecordingControls();
       } else {
         showStatus("Failed to save recording: " + saveResult.error, "error");
       }
@@ -58,6 +62,7 @@ export async function processRecording(audioBlob) {
   } catch (error) {
     console.error("Error processing recording:", error);
     showStatus("Error processing recording", "error");
+    enableRecordingControls();
   }
 }
 

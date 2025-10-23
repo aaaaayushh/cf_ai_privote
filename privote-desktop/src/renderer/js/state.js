@@ -6,7 +6,9 @@
 export const state = {
   // Recording state
   isRecording: false,
+  isPaused: false,
   recordingStartTime: null,
+  pausedTime: 0,
   timerInterval: null,
 
   // Audio state
@@ -44,7 +46,9 @@ export function getState(key) {
  */
 export function resetRecordingState() {
   state.isRecording = false;
+  state.isPaused = false;
   state.recordingStartTime = null;
+  state.pausedTime = 0;
   state.timerInterval = null;
   state.audioContext = null;
   state.mediaRecorder = null;

@@ -164,6 +164,62 @@ ipcMain.handle("transcribe-audio", async (event, audioFilePath) => {
   }
 });
 
+// Recording management handlers
+ipcMain.handle("list-recordings", async () => {
+  try {
+    const recordingsDir = path.join(app.getPath("userData"), "recordings");
+
+    if (!fs.existsSync(recordingsDir)) {
+      return { success: true, recordings: [] };
+    }
+
+    const files = fs.readdirSync(recordingsDir);
+    const recordings = files
+      .filter((file) => file.endsWith(".wav"))
+      .map((file) => {
+        const filepath = path.join(recordingsDir, file);
+        const stats = fs.statSync(filepath);
+        return {
+          filename: file,
+          filepath,
+          size: stats.size,
+          created: stats.birthtime,
+          modified: stats.mtime,
+        };
+      })
+      .sort((a, b) => b.created - a.created);
+
+    return { success: true, recordings };
+  } catch (error) {
+    console.error("Error listing recordings:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle("delete-recording", async (event, filepath) => {
+  try {
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+      return { success: true };
+    }
+    return { success: false, error: "File not found" };
+  } catch (error) {
+    console.error("Error deleting recording:", error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle("show-recording-in-folder", async (event, filepath) => {
+  try {
+    const { shell } = require("electron");
+    shell.showItemInFolder(filepath);
+    return { success: true };
+  } catch (error) {
+    console.error("Error showing recording in folder:", error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Cloudflare Worker communication
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args));

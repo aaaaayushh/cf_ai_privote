@@ -111,3 +111,29 @@ export async function loadAudioFile() {
 export async function transcribeAudio(audioFilePath) {
   return await window.electronAPI.transcribeAudio(audioFilePath);
 }
+
+/**
+ * List all recordings
+ * @returns {Promise<Object>} API response with recordings list
+ */
+export async function listRecordings() {
+  return await window.electronAPI.listRecordings();
+}
+
+/**
+ * Delete a recording
+ * @param {string} filepath - Path to recording file
+ * @returns {Promise<Object>} API response
+ */
+export async function deleteRecording(filepath) {
+  return await window.electronAPI.deleteRecording(filepath);
+}
+
+/**
+ * Show recording in folder
+ * @param {string} filepath - Path to recording file
+ * @returns {Promise<Object>} API response
+ */
+export async function showRecordingInFolder(filepath) {
+  return await window.electronAPI.showRecordingInFolder(filepath);
+}

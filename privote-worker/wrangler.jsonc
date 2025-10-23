@@ -10,13 +10,6 @@
   "observability": {
     "enabled": true
   },
-  "d1_databases": [
-    {
-      "binding": "privote_db",
-      "database_name": "privote-db"
-      // "database_id": "your database id here"
-    }
-  ],
   "ai": {
     "binding": "AI"
   }

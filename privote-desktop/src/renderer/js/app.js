@@ -7,6 +7,7 @@ import { state, setState } from "./state.js";
 import * as api from "./api.js";
 import { setupNavigation } from "./navigation.js";
 import { setupRecordingControls } from "./recording.js";
+import { setupRecordingsView } from "./recordings.js";
 import { setupSummariesControls } from "./meetings.js";
 import { setupSettingsControls, updateSettingsUI } from "./settings.js";
 import { initializeVisualizer } from "./audio.js";
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initializeApp();
   setupNavigation();
   setupRecordingControls();
+  setupRecordingsView();
   setupSettingsControls();
   setupSummariesControls();
 

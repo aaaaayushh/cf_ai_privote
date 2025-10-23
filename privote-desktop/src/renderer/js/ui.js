@@ -168,3 +168,53 @@ export function displayTranscript(transcript) {
   transcriptContent.textContent = transcript;
   transcriptSection.style.display = "block";
 }
+
+/**
+ * Disable recording controls during transcription
+ */
+export function disableRecordingControls() {
+  const recordBtn = document.getElementById("record-btn");
+  const uploadBtn = document.getElementById("upload-btn");
+
+  if (recordBtn) {
+    recordBtn.disabled = true;
+  }
+  if (uploadBtn) {
+    uploadBtn.disabled = true;
+  }
+}
+
+/**
+ * Enable recording controls after transcription
+ */
+export function enableRecordingControls() {
+  const recordBtn = document.getElementById("record-btn");
+  const uploadBtn = document.getElementById("upload-btn");
+
+  if (recordBtn) {
+    recordBtn.disabled = false;
+  }
+  if (uploadBtn) {
+    uploadBtn.disabled = false;
+  }
+}
+
+/**
+ * Disable upload button during recording
+ */
+export function disableUploadButton() {
+  const uploadBtn = document.getElementById("upload-btn");
+  if (uploadBtn) {
+    uploadBtn.disabled = true;
+  }
+}
+
+/**
+ * Enable upload button after recording
+ */
+export function enableUploadButton() {
+  const uploadBtn = document.getElementById("upload-btn");
+  if (uploadBtn) {
+    uploadBtn.disabled = false;
+  }
+}

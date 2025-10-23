@@ -4,6 +4,7 @@
  */
 
 import { loadMeetings } from "./meetings.js";
+import { loadRecordings } from "./recordings.js";
 
 /**
  * Setup navigation event listeners
@@ -24,6 +25,8 @@ export function setupNavigation() {
 
       if (viewId === "summaries") {
         loadMeetings();
+      } else if (viewId === "recordings") {
+        loadRecordings();
       }
     });
   });

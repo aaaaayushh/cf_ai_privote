@@ -196,6 +196,35 @@ export function startTimer() {
 }
 
 /**
+ * Pause recording timer
+ */
+export function pauseTimer() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+    state.pausedTime += Date.now() - state.recordingStartTime;
+  }
+}
+
+/**
+ * Resume recording timer
+ */
+export function resumeTimer() {
+  state.recordingStartTime = Date.now();
+  state.timerInterval = setInterval(() => {
+    const elapsed = state.pausedTime + (Date.now() - state.recordingStartTime);
+    const hours = Math.floor(elapsed / 3600000);
+    const minutes = Math.floor((elapsed % 3600000) / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+
+    const timerDisplay = document.getElementById("recording-timer");
+    timerDisplay.textContent = `${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }, 1000);
+}
+
+/**
  * Stop recording timer
  */
 export function stopTimer() {

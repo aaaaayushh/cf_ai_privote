@@ -24,6 +24,9 @@
         <li class="nav-item active" data-view="record">
           <span class="nav-label">Record</span>
         </li>
+        <li class="nav-item" data-view="recordings">
+          <span class="nav-label">Recordings</span>
+        </li>
         <li class="nav-item" data-view="summaries">
           <span class="nav-label">Summaries</span>
         </li>
@@ -58,6 +61,10 @@
                 <i data-lucide="mic" class="btn-icon"></i>
                 <span>Start Recording</span>
               </button>
+              <button class="btn btn-secondary" id="pause-btn" style="display: none;">
+                <i data-lucide="pause" class="btn-icon"></i>
+                <span>Pause</span>
+              </button>
               <button class="btn btn-secondary" id="upload-btn">
                 <i data-lucide="folder-open" class="btn-icon"></i>
                 <span>Upload Audio</span>
@@ -83,6 +90,24 @@
               <button class="btn btn-secondary" id="save-transcript-btn">
                 Save Locally
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recordings View -->
+      <div class="view" id="recordings-view">
+        <div class="view-header">
+          <h2>Audio Recordings</h2>
+          <p class="view-description">View and manage your local audio recordings</p>
+          <button class="btn btn-secondary" id="refresh-recordings-btn">Refresh</button>
+        </div>
+        
+        <div class="list-container">
+          <div id="recordings-list" class="items-list">
+            <div class="empty-state">
+              <p>No recordings yet</p>
+              <p class="empty-subtitle">Start recording to see your audio files here</p>
             </div>
           </div>
         </div>

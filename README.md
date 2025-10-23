@@ -75,17 +75,17 @@ npm start
 cd ../privote-worker
 
 # Login to Cloudflare
-wrangler login
+npx wrangler login
 
 # Install dependencies
 npm install
 
 # Create database and initialize schema
-wrangler d1 create privote-db
+npx wrangler d1 create privote-db
 # Copy the database ID from output and update wrangler.jsonc
 
 # Initialize database schema
-wrangler d1 execute privote-db --file=./src/schema.sql
+npx wrangler d1 execute privote-db --file=./src/schema.sql
 
 # Deploy to Cloudflare
 npm run deploy
@@ -105,7 +105,7 @@ openssl rand -hex 32
 
 ```bash
 # Set it as a Cloudflare secret
-wrangler secret put API_KEY
+npx wrangler secret put API_KEY
 # Paste the generated key when prompted
 
 # Redeploy with the secret
@@ -265,7 +265,7 @@ npm install
 1. **Create D1 database:**
 
 ```bash
-wrangler d1 create privote-db
+npx wrangler d1 create privote-db
 ```
 
 2. **Update `wrangler.jsonc`** with the database ID from the output:
@@ -280,7 +280,7 @@ database_id = "your-database-id-here"  // Update this
 3. **Initialize schema:**
 
 ```bash
-wrangler d1 execute privote-db --file=./src/schema.sql
+npxwrangler d1 execute privote-db --file=./src/schema.sql
 ```
 
 ### Local Development
@@ -334,10 +334,10 @@ curl https://your-worker-url/api/meetings \
   -H "X-API-Key: your-api-key-here"
 
 # List deployments
-wrangler deployments list
+npx wrangler deployments list
 
 # View logs
-wrangler tail
+npx wrangler tail
 ```
 
 ## Usage
@@ -369,7 +369,7 @@ openssl rand -hex 32
 
 ```bash
 cd privote-worker
-wrangler secret put API_KEY
+npx wrangler secret put API_KEY
 # Paste your key when prompted
 ```
 

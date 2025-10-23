@@ -5,12 +5,21 @@
 
 import { state, setState } from "./state.js";
 import * as api from "./api.js";
-import { showStatus } from "./ui.js";
+import {
+  showStatus,
+  disableRecordingControls,
+  enableRecordingControls,
+  disableUploadButton,
+  enableUploadButton,
+  showConfirmDialog,
+} from "./ui.js";
 import {
   convertToWav,
   setupAudioVisualization,
   startTimer,
   stopTimer,
+  pauseTimer,
+  resumeTimer,
 } from "./audio.js";
 import { processRecording } from "./transcription.js";
 
@@ -19,12 +28,14 @@ import { processRecording } from "./transcription.js";
  */
 export function setupRecordingControls() {
   const recordBtn = document.getElementById("record-btn");
+  const pauseBtn = document.getElementById("pause-btn");
   const uploadBtn = document.getElementById("upload-btn");
   const uploadTranscriptBtn = document.getElementById("upload-transcript-btn");
   const saveTranscriptBtn = document.getElementById("save-transcript-btn");
   const copyTranscriptBtn = document.getElementById("copy-transcript-btn");
 
   recordBtn.addEventListener("click", handleRecordToggle);
+  pauseBtn.addEventListener("click", handlePauseToggle);
   uploadBtn.addEventListener("click", handleUploadAudio);
   uploadTranscriptBtn.addEventListener("click", handleUploadTranscript);
   saveTranscriptBtn.addEventListener("click", handleSaveTranscript);
@@ -36,9 +47,25 @@ export function setupRecordingControls() {
  */
 async function handleRecordToggle() {
   if (state.isRecording) {
-    await stopRecording();
+    showConfirmDialog(
+      "Are you sure you want to stop the recording? This will start processing the audio.",
+      async () => {
+        await stopRecording();
+      }
+    );
   } else {
     await startRecording();
+  }
+}
+
+/**
+ * Toggle pause/resume
+ */
+function handlePauseToggle() {
+  if (state.isPaused) {
+    resumeRecording();
+  } else {
+    pauseRecording();
   }
 }
 
@@ -96,18 +123,25 @@ async function startRecording() {
 
     state.mediaRecorder.start();
     setState("isRecording", true);
+    setState("isPaused", false);
     setState("recordingStartTime", Date.now());
+    setState("pausedTime", 0);
 
     const recordBtn = document.getElementById("record-btn");
+    const pauseBtn = document.getElementById("pause-btn");
+
     recordBtn.classList.add("recording");
     recordBtn.innerHTML =
       '<i data-lucide="circle-stop" class="btn-icon"></i><span>Stop Recording</span>';
+
+    pauseBtn.style.display = "inline-flex";
 
     // Reinitialize icons
     if (window.lucide) {
       lucide.createIcons();
     }
 
+    disableUploadButton();
     startTimer();
     setupAudioVisualization(stream);
 
@@ -150,23 +184,79 @@ async function startRecording() {
 }
 
 /**
- * Stop audio recording
+ * Pause audio recording
  */
-async function stopRecording() {
-  if (state.mediaRecorder && state.isRecording) {
-    state.mediaRecorder.stop();
-    setState("isRecording", false);
+function pauseRecording() {
+  if (state.mediaRecorder && state.isRecording && !state.isPaused) {
+    state.mediaRecorder.pause();
+    setState("isPaused", true);
 
-    const recordBtn = document.getElementById("record-btn");
-    recordBtn.classList.remove("recording");
-    recordBtn.innerHTML =
-      '<i data-lucide="mic" class="btn-icon"></i><span>Start Recording</span>';
+    const pauseBtn = document.getElementById("pause-btn");
+    pauseBtn.innerHTML =
+      '<i data-lucide="play" class="btn-icon"></i><span>Resume</span>';
 
     // Reinitialize icons
     if (window.lucide) {
       lucide.createIcons();
     }
 
+    pauseTimer();
+    showStatus("Recording paused", "info");
+  }
+}
+
+/**
+ * Resume audio recording
+ */
+function resumeRecording() {
+  if (state.mediaRecorder && state.isRecording && state.isPaused) {
+    state.mediaRecorder.resume();
+    setState("isPaused", false);
+
+    const pauseBtn = document.getElementById("pause-btn");
+    pauseBtn.innerHTML =
+      '<i data-lucide="pause" class="btn-icon"></i><span>Pause</span>';
+
+    // Reinitialize icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    resumeTimer();
+    showStatus("Recording resumed", "success");
+  }
+}
+
+/**
+ * Stop audio recording
+ */
+async function stopRecording() {
+  if (state.mediaRecorder && state.isRecording) {
+    if (state.isPaused) {
+      state.mediaRecorder.resume();
+    }
+
+    state.mediaRecorder.stop();
+    setState("isRecording", false);
+    setState("isPaused", false);
+
+    const recordBtn = document.getElementById("record-btn");
+    const pauseBtn = document.getElementById("pause-btn");
+
+    recordBtn.classList.remove("recording");
+    recordBtn.innerHTML =
+      '<i data-lucide="mic" class="btn-icon"></i><span>Start Recording</span>';
+
+    pauseBtn.style.display = "none";
+    pauseBtn.innerHTML =
+      '<i data-lucide="pause" class="btn-icon"></i><span>Pause</span>';
+
+    // Reinitialize icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    enableUploadButton();
     stopTimer();
 
     await api.stopRecording();
@@ -183,6 +273,7 @@ async function handleUploadAudio() {
     const result = await api.loadAudioFile();
 
     if (result.success && !result.canceled) {
+      disableRecordingControls();
       showStatus("Transcribing uploaded audio...", "success", true);
 
       const transcriptResult = await api.transcribeAudio(result.filepath);
@@ -200,10 +291,12 @@ async function handleUploadAudio() {
       } else {
         showStatus("Transcription failed: " + transcriptResult.error, "error");
       }
+      enableRecordingControls();
     }
   } catch (error) {
     console.error("Error uploading audio:", error);
     showStatus("Error uploading audio", "error");
+    enableRecordingControls();
   }
 }
 
