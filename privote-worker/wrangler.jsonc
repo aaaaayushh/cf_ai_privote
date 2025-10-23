@@ -13,8 +13,8 @@
   "d1_databases": [
     {
       "binding": "privote_db",
-      "database_name": "privote-db",
-      "database_id": "011cc3ed-f74a-431e-b602-7a860586dd47"
+      "database_name": "privote-db"
+      // "database_id": "your database id here"
     }
   ],
   "ai": {
