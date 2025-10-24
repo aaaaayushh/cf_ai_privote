@@ -27,7 +27,6 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 - All audio processing stays on your device
 - **Easy model switching** - choose from Tiny, Base, Small, Medium, or Large models
 - **One-click model downloads** directly from the app settings
-- Pre-built app includes Base and Tiny models ready to use
 
 ### AI-Powered Summarization
 
