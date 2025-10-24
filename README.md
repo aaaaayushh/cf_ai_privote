@@ -36,7 +36,6 @@ Privote records meetings, transcribes audio locally using Whisper.cpp, and gener
 ### Meeting Management
 
 - View all meetings with summaries and action items
-- Search and filter past meetings
 - Export meetings as Markdown
 
 ## Quick Start
@@ -257,7 +256,7 @@ npx wrangler d1 create privote-db
 3. **Initialize schema:**
 
 ```bash
-npxwrangler d1 execute privote-db --file=./src/schema.sql
+npx wrangler d1 execute privote-db --file=./src/schema.sql
 ```
 
 ### Local Development
